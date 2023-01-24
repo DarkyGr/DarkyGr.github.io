@@ -1,0 +1,215 @@
+/*=============== General Properties ================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url(https://fonts.googleapis.com/css?family=Varela+Round);
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+    color: #fff;
+    background-color: rgb(0, 0, 0);
+}
+
+/*=================== BACKGROUND FRO PRESENTATION ==========================*/
+.presentation {
+    background: linear-gradient(-45deg, #0B0742, #004E9A, #428CD4, #FF9CDA, #FDC094);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    height: 50vh;
+    font-weight: bold;
+    font-size: 100px;
+}
+
+.presentation .welcome {
+    color: rgba(255, 255, 255, 0.9);
+    animation: move linear 2000ms infinite;
+}
+
+/*=================== ANIMATED FOR PRESENTATION ==========================*/
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes move {
+    0% {
+        text-shadow:
+            4px -4px 0 hsla(0, 100%, 50%, 1),
+            3px -3px 0 hsla(0, 100%, 50%, 1),
+            2px -2px 0 hsla(0, 100%, 50%, 1),
+            1px -1px 0 hsla(0, 100%, 50%, 1),
+            -4px 4px 0 hsla(180, 100%, 50%, 1),
+            -3px 3px 0 hsla(180, 100%, 50%, 1),
+            -2px 2px 0 hsla(180, 100%, 50%, 1),
+            -1px 1px 0 hsla(180, 100%, 50%, 1);
+    }
+
+    25% {
+        text-shadow:
+            -4px -4px 0 hsla(180, 100%, 50%, 1),
+            -3px -3px 0 hsla(180, 100%, 50%, 1),
+            -2px -2px 0 hsla(180, 100%, 50%, 1),
+            -1px -1px 0 hsla(180, 100%, 50%, 1),
+            4px 4px 0 hsla(0, 100%, 50%, 1),
+            3px 3px 0 hsla(0, 100%, 50%, 1),
+            2px 2px 0 hsla(0, 100%, 50%, 1),
+            1px 1px 0 hsla(0, 100%, 50%, 1);
+    }
+
+    50% {
+        text-shadow:
+            -4px 4px 0 hsla(0, 100%, 50%, 1),
+            -3px 3px 0 hsla(0, 100%, 50%, 1),
+            -2px 2px 0 hsla(0, 100%, 50%, 1),
+            -1px 1px 0 hsla(0, 100%, 50%, 1),
+            4px -4px 0 hsla(180, 100%, 50%, 1),
+            3px -3px 0 hsla(180, 100%, 50%, 1),
+            2px -2px 0 hsla(180, 100%, 50%, 1),
+            1px -1px 0 hsla(180, 100%, 50%, 1);
+    }
+
+    75% {
+        text-shadow:
+            4px 4px 0 hsla(180, 100%, 50%, 1),
+            3px 3px 0 hsla(180, 100%, 50%, 1),
+            2px 2px 0 hsla(180, 100%, 50%, 1),
+            1px 1px 0 hsla(180, 100%, 50%, 1),
+            -4px -4px 0 hsla(0, 100%, 50%, 1),
+            -3px -3px 0 hsla(0, 100%, 50%, 1),
+            -2px -2px 0 hsla(0, 100%, 50%, 1),
+            -1px -1px 0 hsla(0, 100%, 50%, 1);
+    }
+
+    100% {
+        text-shadow:
+            4px -4px 0 hsla(0, 100%, 50%, 1),
+            3px -3px 0 hsla(0, 100%, 50%, 1),
+            2px -2px 0 hsla(0, 100%, 50%, 1),
+            1px -1px 0 hsla(0, 100%, 50%, 1),
+            -4px 4px 0 hsla(180, 100%, 50%, 1),
+            -3px 3px 0 hsla(180, 100%, 50%, 1),
+            -2px 2px 0 hsla(180, 100%, 50%, 1),
+            -1px 1px 0 hsla(180, 100%, 50%, 1);
+    }
+}
+
+
+/*=========================CONTACTOS BACKGROUND================================*/
+
+#bg-contact-me {
+    position: relative;
+    top: -130px;
+}
+
+#section-contact-me {
+    background-color: #1b2a4e;
+    min-height: 500px;
+    position: relative;
+}
+
+/*=================== FORM ==========================*/
+
+#contenedor-formulario {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fbfafa;
+    border-radius: 5px;
+
+}
+
+#titulo-formulario {
+    color: #3f3f3f;
+}
+
+
+/*=========================MEDIA QUERIES SCREEN M================================*/
+
+@media (max-width:1200px) {
+
+    #intro,
+    #equipo {
+        width: 90% !important;
+        margin: auto;
+    }
+
+    #local {
+        flex-wrap: wrap;
+        padding-top: 30px;
+    }
+
+    .wrapper-local {
+        width: 90%;
+        margin: auto;
+        padding-top: 50px;
+    }
+
+}
+
+/*=========================MEDIA QUERIES SCREEN SM================================*/
+
+
+@media (max-width:768px) {
+
+    #intro,
+    #equipo {
+        width: 90% !important;
+        margin: auto;
+    }
+
+
+    #img-equipo {
+        max-height: 20rem !important;
+        width: 90%;
+    }
+
+    .wrapper-local {
+        width: 90%;
+        margin: auto;
+        padding-top: 50px;
+    }
+
+    #local {
+        flex-wrap: wrap;
+    }
+
+    .mapa img {
+        width: 100%;
+        height: auto;
+    }
+
+    #bg-contactos {
+        top: -120px;
+    }
+
+
+}
+
+/*=========================MEDIA QUERIES SCREEN EXTRA-SM================================*/
+
+@media (max-width: 576px) {
+    #servicios-fila-2 {
+        width: 100% !important;
+    }
+
+    #servicios-fila-1 {
+        width: 100% !important;
+    }
+
+    .icono-wrap {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        text-align: center;
+    }
+}
