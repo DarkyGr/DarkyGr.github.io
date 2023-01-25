@@ -204,6 +204,19 @@ body {
 }
 
 
+/*=========================FOOTER================================*/
+
+footer {
+    background: #00000040;
+    min-height: 100px;
+    /* border-top: 0.5px solid #fff; */
+}
+
+footer p {
+    color: #f3f3f3;
+    text-align: center;
+}
+
 /*========================= MEDIA QUERIES SCREEN M ================================*/
 
 @media (max-width:1200px) {
