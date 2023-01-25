@@ -172,10 +172,12 @@ body {
     }
 }
 
+/*========================= EXPERIENCE ================================*/
 
 #peepo_bye {
     width: 150px;
 }
+
 
 /*========================= CONTACT BACKGROUND ================================*/
 
@@ -223,80 +225,23 @@ footer p {
 
 /*========================= MEDIA QUERIES SCREEN M ================================*/
 
-@media (max-width:1200px) {
-
-    #intro,
-    #equipo {
-        width: 90% !important;
-        margin: auto;
-    }
-
-    #local {
-        flex-wrap: wrap;
-        padding-top: 30px;
-    }
-
-    .wrapper-local {
-        width: 90%;
-        margin: auto;
-        padding-top: 50px;
-    }
-
+@media (max-width:1200px) {    
 }
 
 /*========================= MEDIA QUERIES SCREEN SM ================================*/
 
 
 @media (max-width:768px) {
-
-    #intro,
-    #equipo {
-        width: 90% !important;
-        margin: auto;
+    .presentation {
+        font-size: 60px;
     }
 
-
-    #img-equipo {
-        max-height: 20rem !important;
-        width: 90%;
+    #peepo_bye {
+        width: 90px;
     }
-
-    .wrapper-local {
-        width: 90%;
-        margin: auto;
-        padding-top: 50px;
-    }
-
-    #local {
-        flex-wrap: wrap;
-    }
-
-    .mapa img {
-        width: 100%;
-        height: auto;
-    }
-
-    #bg-contactos {
-        top: -120px;
-    }
-
-
 }
 
 /*========================= MEDIA QUERIES SCREEN EXTRA-SM ================================*/
 
-@media (max-width: 576px) {
-    #servicios-fila-2 {
-        width: 100% !important;
-    }
-
-    #servicios-fila-1 {
-        width: 100% !important;
-    }
-
-    .icono-wrap {
-        flex-wrap: wrap !important;
-        justify-content: center !important;
-        text-align: center;
-    }
+@media (max-width: 576px) {   
 }
