@@ -119,7 +119,7 @@ body {
 }
 
 
-/*=================== GROUP BUTTONS ==========================*/
+/*=================== SOCIAL NETWORKING SITES ==========================*/
 .social-group {
     /* width: 100%; */
     min-height: 15vh;
@@ -136,6 +136,16 @@ body {
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center;
+}
+
+#bg-contact-me {
+    position: relative;
+    top: -130px;
+}
+
+#span3{
+    padding-top: 18px;
+    background-color: #000;
 }
 
 .icon-3d {
@@ -185,43 +195,6 @@ img:hover {
     transform: rotateY(150deg);
 }
 
-#peepo_hey {        
-}
-
-#peepo_bye {    
-}
-
-
-/*========================= CONTACT BACKGROUND ================================*/
-
-#bg-contact-me {
-    position: relative;
-    top: -130px;
-}
-
-#section-contact-me {
-    background-color: #1b2a4e;
-    min-height: 500px;
-    position: relative;
-}
-
-/*=================== FORM ==========================*/
-
-#form-container {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #000000;
-    border: 2px solid;
-    border-radius: 10px;
-
-}
-
-#form-title {
-    color: #ffffff;
-}
-
 
 /*=========================FOOTER================================*/
 
@@ -253,10 +226,10 @@ footer p {
         font-size: 60px;
     }
 
-    #peepo_bye #peepo_hey{
+    img{
         width: 90px;
     }
-
+    
     footer {     
         min-height: 10px;     
     }
