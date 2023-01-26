@@ -174,16 +174,21 @@ body {
 
 /*========================= EXPERIENCE ================================*/
 
-/* #experience {
-    background-color: #051438;
-} */
-
-#peepo_bye {
+img {
+    /* background-color: #051438; */
     width: 150px;
+    transition: width 2s, height 2s, transform 2s;
 }
 
-#peepo_hey {
-    width: 150px;
+img:hover {
+    width: 250px;    
+    transform: rotateY(150deg);
+}
+
+#peepo_hey {        
+}
+
+#peepo_bye {    
 }
 
 
