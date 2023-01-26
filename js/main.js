@@ -1,6 +1,12 @@
 let app = document.getElementById('typewriter');
+let app2 = document.getElementById('typewriter2');
  
 let typewriter = new Typewriter(app, {
+  loop: true,
+  delay: 100,
+});
+
+let typewriter2 = new Typewriter(app2, {
   loop: true,
   delay: 100,
 });
@@ -8,6 +14,13 @@ let typewriter = new Typewriter(app, {
 typewriter
   .pauseFor(500)
   .typeString('Hi! 👋 I\'m Guillermo.')  
-  .pauseFor(200)
+  .pauseFor(500)
+  .deleteChars(10)
+  .start();
+
+  typewriter2
+  .pauseFor(500)
+  .typeString('Education & Experience')  
+  .pauseFor(2000)
   .deleteChars(10)
   .start();
