@@ -174,7 +174,15 @@ body {
 
 /*========================= EXPERIENCE ================================*/
 
+/* #experience {
+    background-color: #051438;
+} */
+
 #peepo_bye {
+    width: 150px;
+}
+
+#peepo_hey {
     width: 150px;
 }
 
