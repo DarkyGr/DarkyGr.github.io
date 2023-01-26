@@ -4,4 +4,5 @@ css/main.css
 # Images
 img/*
 !img/logo.png
-!img/peepo_bye.png
+!img/peepo_bye.gif
+!img/peepo_fine.gif
