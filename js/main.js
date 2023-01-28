@@ -31,9 +31,9 @@ typewriter2
   .deleteChars(10)
   .start();
 
-  typewriter3
+typewriter3
   .pauseFor(500)
-  .typeString('Social Networking sites')
+  .typeString('Social Networking Sites')
   .pauseFor(2000)
   .deleteChars(10)
   .start();
