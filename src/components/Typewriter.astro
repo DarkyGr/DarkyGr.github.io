@@ -1,0 +1,73 @@
+---
+/**
+ * Dependency-free replacement for typewriter-effect.
+ * Types the text, waits, deletes it and loops. With prefers-reduced-motion
+ * the full text is shown statically.
+ */
+interface Props {
+  text: string;
+  as?: 'h1' | 'h2' | 'p' | 'span';
+  class?: string;
+  pause?: number;
+}
+
+const { text, as: Tag = 'span', class: className, pause = 2000 } = Astro.props;
+---
+
+<Tag class:list={['typewriter', className]} data-text={text} data-pause={pause} aria-label={text}>
+  <span aria-hidden="true" class="tw-text">{text}</span><span aria-hidden="true" class="tw-caret">|</span>
+</Tag>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  async function run(el: HTMLElement) {
+    const full = el.dataset.text ?? '';
+    const pause = Number(el.dataset.pause ?? 2000);
+    const out = el.querySelector<HTMLElement>('.tw-text');
+    if (!out) return;
+    // Graphemes so emojis like 👋 are typed as one character.
+    const chars = [...new Intl.Segmenter().segment(full)].map((s) => s.segment);
+
+    for (;;) {
+      for (let i = 0; i <= chars.length; i++) {
+        out.textContent = chars.slice(0, i).join('');
+        await sleep(100);
+      }
+      await sleep(pause);
+      for (let i = chars.length; i >= 0; i--) {
+        out.textContent = chars.slice(0, i).join('');
+        await sleep(40);
+      }
+      await sleep(500);
+    }
+  }
+
+  if (!reduce) {
+    document.querySelectorAll<HTMLElement>('.typewriter').forEach((el) => {
+      // Only animate while visible to save CPU.
+      const io = new IntersectionObserver(([entry], obs) => {
+        if (entry?.isIntersecting) {
+          obs.disconnect();
+          run(el);
+        }
+      });
+      io.observe(el);
+    });
+  }
+</script>
+
+<style>
+  .tw-caret {
+    animation: blink 1s steps(1) infinite;
+    margin-inline-start: 0.05em;
+    font-weight: 300;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tw-caret { display: none; }
+  }
+</style>

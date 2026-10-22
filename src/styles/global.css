@@ -1,0 +1,130 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/montserrat';
+
+@theme {
+  --font-sans: 'Montserrat Variable', ui-sans-serif, system-ui, sans-serif;
+  --color-glitch-red: hsl(0 100% 50%);
+  --color-glitch-cyan: hsl(180 100% 50%);
+  --color-brand-1: #0b0742;
+  --color-brand-2: #004e9a;
+  --color-brand-3: #428cd4;
+  --color-brand-4: #ff9cda;
+  --color-brand-5: #fdc094;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-black font-sans text-white antialiased;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-brand-4);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+}
+
+/* ---------- Hero: animated gradient (typed custom property) ---------- */
+@property --hero-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: -45deg;
+}
+
+.hero-bg {
+  background: linear-gradient(
+    var(--hero-angle),
+    var(--color-brand-1),
+    var(--color-brand-2),
+    var(--color-brand-3),
+    var(--color-brand-4),
+    var(--color-brand-5)
+  );
+  background-size: 400% 400%;
+  animation:
+    gradient-pan 15s ease infinite,
+    gradient-spin 30s linear infinite;
+}
+
+@keyframes gradient-pan {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes gradient-spin {
+  to { --hero-angle: 315deg; }
+}
+
+/* ---------- Glitch text (from the original site) ---------- */
+@utility glitch {
+  --o: 4px;
+  animation: glitch 2s linear infinite;
+}
+
+@keyframes glitch {
+  0%, 100% {
+    text-shadow:
+      var(--o) calc(var(--o) * -1) 0 var(--color-glitch-red),
+      calc(var(--o) * -1) var(--o) 0 var(--color-glitch-cyan);
+  }
+  25% {
+    text-shadow:
+      calc(var(--o) * -1) calc(var(--o) * -1) 0 var(--color-glitch-cyan),
+      var(--o) var(--o) 0 var(--color-glitch-red);
+  }
+  50% {
+    text-shadow:
+      calc(var(--o) * -1) var(--o) 0 var(--color-glitch-red),
+      var(--o) calc(var(--o) * -1) 0 var(--color-glitch-cyan);
+  }
+  75% {
+    text-shadow:
+      var(--o) var(--o) 0 var(--color-glitch-cyan),
+      calc(var(--o) * -1) calc(var(--o) * -1) 0 var(--color-glitch-red);
+  }
+}
+
+/* ---------- Social icons "3D shake" ---------- */
+@utility icon-3d {
+  animation: icon3d 200ms 10;
+  filter: drop-shadow(0 0 0 transparent);
+
+  &:hover,
+  &:focus-visible {
+    animation-iteration-count: infinite;
+  }
+}
+
+@keyframes icon3d {
+  0%   { filter: drop-shadow(5px 4px 0 #f44336) drop-shadow(-5px -6px 0 #2196f3); }
+  25%  { filter: drop-shadow(-5px -6px 0 #f44336) drop-shadow(5px 4px 0 #2196f3); }
+  50%  { filter: drop-shadow(5px -4px 0 #f44336) drop-shadow(-8px 4px 0 #2196f3); }
+  75%  { filter: drop-shadow(-8px -4px 0 #f44336) drop-shadow(-5px -4px 0 #2196f3); }
+  100% { filter: drop-shadow(-5px 0 0 #f44336) drop-shadow(5px -4px 0 #2196f3); }
+}
+
+/* ---------- Scroll-driven reveal (no JS) ---------- */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+  @keyframes reveal {
+    from { opacity: 0; translate: 0 3rem; scale: 0.96; }
+    to   { opacity: 1; translate: 0 0; scale: 1; }
+  }
+}
+
+/* ---------- Respect user motion preferences ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { animation: none; }
+}

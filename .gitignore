@@ -1,8 +1,22 @@
-# JS Test
-css/main.css
+# build output
+dist/
+.astro/
 
-# Images
-img/*
-!img/logo.png
-!img/peepo_bye.gif
-!img/peepo_fine.gif
+# dependencies
+node_modules/
+
+# logs & env
+npm-debug.log*
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# local tooling (Claude Code preview config)
+.claude/
+
+# private CV data (phone) and PDFs generated with it
+cv.private.json
+cv-private/
