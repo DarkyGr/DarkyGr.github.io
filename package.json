@@ -1,0 +1,28 @@
+{
+  "name": "darkygr-portfolio",
+  "type": "module",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "cv:pdf": "astro build && node scripts/cv-pdf.mjs && astro build"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/montserrat": "^5.3.0",
+    "@iconify-json/mdi": "^1.2.3",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.4.2",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "pdf-lib": "^1.17.1",
+    "puppeteer-core": "^25.16.0",
+    "typescript": "^6.0.3"
+  }
+}

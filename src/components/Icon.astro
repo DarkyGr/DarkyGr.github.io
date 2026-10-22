@@ -1,0 +1,21 @@
+---
+import mdi from '@iconify-json/mdi/icons.json';
+
+interface Props {
+  name: string;
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+const icon = (mdi.icons as Record<string, { body: string }>)[name];
+if (!icon) throw new Error(`Icon "${name}" not found in @iconify-json/mdi`);
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="currentColor"
+  aria-hidden="true"
+  class={className}
+  set:html={icon.body}
+/>

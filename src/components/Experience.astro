@@ -1,0 +1,63 @@
+---
+import Icon from './Icon.astro';
+import Typewriter from './Typewriter.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useTranslations } from '../i18n/ui';
+
+const t = useTranslations(Astro.currentLocale);
+---
+
+<section id="experience" class="px-4 py-20 text-center" aria-labelledby="exp-title">
+  <h2 id="exp-title" class="reveal mb-6 inline-block rounded-xl bg-blue-600 px-5 py-2 text-[clamp(1.5rem,4vw,2.5rem)] font-bold">
+    <Typewriter text={t('exp.title')} />
+  </h2>
+
+  <p class="reveal text-2xl font-semibold text-red-500">{t('exp.none')}</p>
+
+  <img
+    src="/img/peepo_fine.webp"
+    alt={t('exp.peepoFineAlt')}
+    width="150"
+    height="150"
+    loading="lazy"
+    decoding="async"
+    class="peepo reveal mx-auto my-16"
+  />
+
+  <div class="reveal space-y-3">
+    <p class="text-3xl font-bold text-amber-400">{t('exp.joke')}</p>
+    <p class="text-lg">{t('exp.moreInfo')}</p>
+    <a
+      href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'cv/')}
+      class="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-3 font-semibold shadow-lg shadow-emerald-900/40 transition hover:scale-105 hover:bg-emerald-500"
+    >
+      <Icon name="file-account-outline" class="size-5" />
+      {t('exp.cta')}
+    </a>
+  </div>
+
+  <p class="reveal mt-20 text-lg">{t('exp.bye')}</p>
+  <img
+    src="/img/peepo_bye.webp"
+    alt={t('exp.peepoByeAlt')}
+    width="150"
+    height="150"
+    loading="lazy"
+    decoding="async"
+    class="peepo reveal mx-auto mt-6"
+  />
+</section>
+
+<style>
+  .peepo {
+    width: clamp(90px, 15vw, 150px);
+    height: auto;
+    transition:
+      width 1s,
+      transform 1s;
+  }
+  .peepo:hover {
+    width: clamp(150px, 25vw, 250px);
+    transform: rotateY(150deg);
+  }
+</style>
