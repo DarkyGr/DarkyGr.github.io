@@ -1,0 +1,51 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { DEFAULT_LANG, LANGS, isLang, useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  path?: string;
+}
+
+const { path = '' } = Astro.props;
+const current: Lang = isLang(Astro.currentLocale) ? Astro.currentLocale : DEFAULT_LANG;
+const t = useTranslations(current);
+const langs = Object.keys(LANGS) as Lang[];
+---
+
+<nav
+  aria-label={t('a11y.langSwitch')}
+  class="lang-switcher fixed top-4 right-4 z-40 flex rounded-full border border-white/20 bg-black/40 p-1 text-sm font-semibold shadow-lg backdrop-blur-md"
+>
+  {
+    langs.map((l) => {
+      const active = l === current;
+      return (
+        <a
+          href={getRelativeLocaleUrl(l, path)}
+          hreflang={l}
+          lang={l}
+          data-lang={l}
+          title={LANGS[l].label}
+          aria-current={active ? 'page' : undefined}
+          class:list={[
+            'rounded-full px-3 py-1 transition-colors',
+            active ? 'bg-white text-black' : 'text-white/80 hover:bg-white/15 hover:text-white',
+          ]}
+        >
+          <span class="sr-only">{LANGS[l].label}</span>
+          <span aria-hidden="true">{LANGS[l].short}</span>
+        </a>
+      );
+    })
+  }
+</nav>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('[data-lang]').forEach((a) => {
+    a.addEventListener('click', () => {
+      try {
+        localStorage.setItem('lang', a.dataset.lang ?? 'en');
+      } catch {}
+    });
+  });
+</script>

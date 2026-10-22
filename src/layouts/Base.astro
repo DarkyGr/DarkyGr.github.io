@@ -1,0 +1,90 @@
+---
+import { getAbsoluteLocaleUrl } from 'astro:i18n';
+import LangSwitcher from '../components/LangSwitcher.astro';
+import { DEFAULT_LANG, LANGS, isLang, useTranslations, type Lang } from '../i18n/ui';
+import { SITE, SOCIALS } from '../lib/site';
+import '../styles/global.css';
+
+interface Props {
+  /** Path inside each locale, e.g. 'cv/'. Used for hreflang and the language switcher. */
+  path?: string;
+  title?: string;
+  description?: string;
+  bodyClass?: string;
+}
+
+const lang: Lang = isLang(Astro.currentLocale) ? Astro.currentLocale : DEFAULT_LANG;
+const t = useTranslations(lang);
+
+const { path = '', title = t('meta.title'), description = t('meta.description'), bodyClass } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+const langs = Object.keys(LANGS) as Lang[];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  url: Astro.site?.href,
+  sameAs: SOCIALS.filter((s) => s.href.startsWith('http')).map((s) => s.href),
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {langs.map((l) => <link rel="alternate" hreflang={l} href={getAbsoluteLocaleUrl(l, path)} />)}
+    <link rel="alternate" hreflang="x-default" href={getAbsoluteLocaleUrl(DEFAULT_LANG, path)} />
+    <meta name="theme-color" content="#000000" />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={LANGS[lang].og} />
+    {langs.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={LANGS[l].og} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <slot name="head">
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    </slot>
+
+    <!--
+      Language preference: an explicit choice (stored by the switcher) wins;
+      otherwise first-time Spanish-speaking visitors to "/" go to "/es/".
+      Runs before paint to avoid a flash of the wrong language.
+    -->
+    <script is:inline define:vars={{ current: lang, homes: Object.fromEntries(langs.map((l) => [l, getAbsoluteLocaleUrl(l, path)])) }}>
+      try {
+        const saved = localStorage.getItem('lang');
+        const browser = (navigator.language || '').slice(0, 2).toLowerCase();
+        const target = saved ?? (current === 'en' && browser === 'es' ? 'es' : null);
+        if (target && target !== current && homes[target]) {
+          location.replace(new URL(homes[target]).pathname + location.hash);
+        }
+      } catch {}
+    </script>
+  </head>
+  <body class={bodyClass}>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-black"
+    >
+      {t('a11y.skip')}
+    </a>
+    <LangSwitcher path={path} />
+    <slot />
+  </body>
+</html>

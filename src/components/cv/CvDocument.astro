@@ -1,0 +1,241 @@
+---
+/**
+ * ATS-friendly CV: single column, real text, standard section headings,
+ * no tables/columns/skill bars, plain-text URLs, consistent dates.
+ * The same markup is printed to PDF by scripts/cv-pdf.mjs.
+ */
+import type { Lang } from '../../i18n/ui';
+import { CV_DATA, formatMonth } from '../../data/cv';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const cv = CV_DATA[lang];
+const h = cv.headings;
+const range = (start: string, end?: string) => `${formatMonth(start, lang)} – ${end ? formatMonth(end, lang) : h.present}`;
+const bare = (url: string) => decodeURI(url).replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+---
+
+<article class="cv" lang={lang}>
+  <header class="cv-header">
+    <h1>{cv.name}</h1>
+    <p class="cv-label">{cv.label}</p>
+    <p class="cv-contact">
+      <span class="nowrap">{cv.location}</span>
+      <span class="sep" aria-hidden="true">|</span>
+      <a href={`mailto:${cv.email}`}>{cv.email}</a>
+      <span data-phone hidden><span class="sep" aria-hidden="true">|</span><span data-phone-value></span></span>
+      {
+        cv.profiles.map((p) => (
+          <>
+            <span class="sep" aria-hidden="true">|</span>
+            <a href={p.url}>{bare(p.url)}</a>
+          </>
+        ))
+      }
+      <span class="sep" aria-hidden="true">|</span>
+      <a href={cv.website}>{bare(cv.website)}</a>
+    </p>
+  </header>
+
+  <section>
+    <h2>{h.summary}</h2>
+    <p>{cv.summary}</p>
+  </section>
+
+  <section>
+    <h2>{h.experience}</h2>
+    {
+      cv.work.map((job) => (
+        <div class="job">
+          <div class="row">
+            <h3>
+              {job.position} <span class="company">· {job.company}</span>
+            </h3>
+            <p class="dates">{range(job.start, job.end)}</p>
+          </div>
+          {job.summary && <p class="muted">{job.summary}</p>}
+          <ul>
+            {job.highlights.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+          <p class="tech">
+            <strong>{h.tech}:</strong> {job.tech.join(', ')}
+          </p>
+        </div>
+      ))
+    }
+  </section>
+
+  <section>
+    <h2>{h.skills}</h2>
+    <ul class="skills">
+      {
+        cv.skills.map((s) => (
+          <li>
+            <strong>{s.name}:</strong> {s.keywords.join(', ')}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section>
+    <h2>{h.education}</h2>
+    {
+      cv.education.map((e) => (
+        <div class="job">
+          <div class="row">
+            <h3>
+              {e.studyType}, {e.area} <span class="company">· {e.institution}</span>
+            </h3>
+            <p class="dates">{range(e.start, e.end)}</p>
+          </div>
+          <ul>
+            {e.courses.map((c) => (
+              <li>{c}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+
+  <section>
+    <h2>{h.courses}</h2>
+    <ul>
+      {cv.courses.map((c) => <li>{c}</li>)}
+    </ul>
+  </section>
+
+  <section>
+    <h2>{h.additional}</h2>
+    <ul class="skills">
+      <li><strong>{h.languages}:</strong> {cv.languages.map((l) => `${l.language} (${l.fluency})`).join(', ')}</li>
+      <li><strong>{h.softSkills}:</strong> {cv.softSkills.join(', ')}</li>
+    </ul>
+  </section>
+</article>
+
+<style>
+  .cv {
+    --ink: #111827;
+    --muted: #4b5563;
+    --accent: #004e9a;
+    font-family: 'Inter Variable', 'Segoe UI', Arial, sans-serif;
+    font-size: 9.5pt;
+    line-height: 1.36;
+    color: var(--ink);
+    background: #fff;
+  }
+  .cv-header {
+    border-top: 5px solid transparent;
+    border-image: linear-gradient(90deg, #0b0742, #004e9a, #428cd4, #ff9cda, #fdc094) 1;
+    padding-top: 10pt;
+  }
+  h1 {
+    font-size: 22pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .cv-label {
+    margin-top: 2pt;
+    font-size: 12.5pt;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .cv-contact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    row-gap: 1pt;
+    margin-top: 5pt;
+    font-size: 9pt;
+    color: var(--muted);
+  }
+  .cv-contact a,
+  .cv-contact .nowrap,
+  .cv-contact [data-phone] {
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  [data-phone]:not([hidden]) {
+    display: inline-flex;
+  }
+  .sep {
+    margin-inline: 0.45em;
+    color: #9ca3af;
+  }
+  section {
+    margin-top: 9pt;
+  }
+  h2 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    border-bottom: 1px solid #d1d5db;
+    padding-bottom: 2pt;
+    margin-bottom: 5pt;
+    break-after: avoid;
+  }
+  .job {
+    margin-bottom: 6pt;
+    break-inside: avoid;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12pt;
+  }
+  h3 {
+    font-size: 10pt;
+    font-weight: 700;
+  }
+  .company {
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .dates {
+    flex-shrink: 0;
+    font-size: 9pt;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  ul {
+    margin-top: 3pt;
+    padding-inline-start: 14pt;
+    list-style: disc;
+  }
+  li {
+    margin-top: 1pt;
+  }
+  li::marker {
+    color: var(--accent);
+  }
+  .skills {
+    list-style: none;
+    padding: 0;
+  }
+  .muted {
+    color: var(--muted);
+    font-style: italic;
+  }
+  .tech {
+    margin-top: 3pt;
+    font-size: 8.75pt;
+    color: var(--muted);
+  }
+  .tech strong,
+  .skills strong {
+    color: var(--ink);
+  }
+</style>

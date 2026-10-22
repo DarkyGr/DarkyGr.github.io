@@ -1,0 +1,35 @@
+---
+import Icon from './Icon.astro';
+import Typewriter from './Typewriter.astro';
+import { SOCIALS } from '../lib/site';
+import { useTranslations } from '../i18n/ui';
+
+const t = useTranslations(Astro.currentLocale);
+---
+
+<section id="social" class="reveal px-4 py-20 text-center" aria-labelledby="social-title">
+  <h2 id="social-title" class="mb-10 inline-block rounded-xl bg-emerald-600 px-5 py-2 text-[clamp(1.5rem,4vw,2.5rem)] font-bold">
+    <Typewriter text={t('social.title')} />
+  </h2>
+
+  <ul class="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+    {
+      SOCIALS.map((s) => {
+        const external = s.href.startsWith('http');
+        return (
+          <li>
+            <a
+              href={s.href}
+              aria-label={s.label}
+              title={s.label}
+              class="icon-3d block rounded-xl p-2 text-white transition-colors hover:text-brand-4"
+              {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              <Icon name={s.icon} class="size-14 sm:size-16" />
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</section>

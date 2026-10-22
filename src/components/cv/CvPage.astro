@@ -1,0 +1,107 @@
+---
+import '@fontsource-variable/inter';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import Base from '../../layouts/Base.astro';
+import Icon from '../Icon.astro';
+import CvDocument from './CvDocument.astro';
+import { DEFAULT_LANG, isLang, type Lang } from '../../i18n/ui';
+import { CV_DATA, CV_PDF } from '../../data/cv';
+
+const lang: Lang = isLang(Astro.currentLocale) ? Astro.currentLocale : DEFAULT_LANG;
+const cv = CV_DATA[lang];
+
+// Rich structured data so search engines and AI/ATS crawlers can read the profile.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  inLanguage: lang,
+  mainEntity: {
+    '@type': 'Person',
+    name: cv.name,
+    jobTitle: cv.label,
+    description: cv.summary,
+    email: `mailto:${cv.email}`,
+    url: cv.website,
+    address: { '@type': 'PostalAddress', addressLocality: cv.location },
+    sameAs: cv.profiles.map((p) => p.url),
+    worksFor: cv.work.filter((w) => !w.end).map((w) => ({ '@type': 'Organization', name: w.company })),
+    alumniOf: cv.education.map((e) => ({ '@type': 'CollegeOrUniversity', name: e.institution })),
+    knowsAbout: cv.skills.flatMap((s) => s.keywords),
+    knowsLanguage: cv.languages.map((l) => l.language),
+  },
+};
+---
+
+<Base path="cv/" title={`${cv.name} · CV · ${cv.label}`} description={cv.summary} bodyClass="cv-body">
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <link slot="head" rel="alternate" type="application/json" href={lang === 'en' ? '/resume.json' : '/es/resume.json'} title="JSON Resume" />
+
+  <nav class="cv-toolbar mx-auto flex max-w-[8.5in] flex-wrap items-center gap-3 px-4 pt-5 pb-4 pe-28 text-sm font-semibold">
+    <a href={getRelativeLocaleUrl(lang)} class="inline-flex items-center gap-1 text-white/80 hover:text-white">
+      ← {cv.headings.back}
+    </a>
+    <a
+      href={CV_PDF[lang]}
+      download
+      class="ms-auto inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-500"
+    >
+      <Icon name="file-account-outline" class="size-4" />
+      {cv.headings.download}
+    </a>
+    <button
+      type="button"
+      onclick="window.print()"
+      class="cursor-pointer rounded-full border border-white/25 px-4 py-2 text-white/90 hover:bg-white/10"
+    >
+      {cv.headings.print}
+    </button>
+  </nav>
+
+  <main id="main" class="cv-sheet mx-auto mb-10 max-w-[8.5in] rounded-lg bg-white px-[0.6in] py-[0.5in] shadow-2xl shadow-black/60">
+    <CvDocument lang={lang} />
+  </main>
+</Base>
+
+<style is:global>
+  body.cv-body {
+    background: radial-gradient(ellipse at top, #0b0742 0%, #000 60%);
+  }
+
+  @page {
+    size: Letter;
+    margin: 0.4in 0.5in;
+  }
+
+  @media print {
+    html:has(body.cv-body) {
+      color-scheme: light;
+      background: #fff;
+    }
+    body.cv-body {
+      background: #fff !important;
+    }
+    .cv-toolbar,
+    .lang-switcher,
+    body.cv-body > a[href='#main'] {
+      display: none !important;
+    }
+    .cv-sheet {
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .cv-sheet {
+      padding: 1.25rem !important;
+      border-radius: 0 !important;
+    }
+    .cv .row {
+      flex-direction: column;
+      gap: 0 !important;
+    }
+  }
+</style>

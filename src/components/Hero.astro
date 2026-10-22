@@ -1,0 +1,33 @@
+---
+import Typewriter from './Typewriter.astro';
+import { useTranslations } from '../i18n/ui';
+
+const t = useTranslations(Astro.currentLocale);
+---
+
+<header class="hero-bg relative grid min-h-svh place-items-center overflow-hidden px-4">
+  <Typewriter
+    as="h1"
+    text={t('hero.greeting')}
+    class="glitch text-center text-[clamp(2.5rem,9vw,6.5rem)] leading-tight font-extrabold"
+  />
+
+  <a
+    href="#social"
+    class="absolute bottom-24 left-1/2 -translate-x-1/2 animate-bounce text-sm font-semibold tracking-widest text-white/80 uppercase hover:text-white"
+  >
+    {t('hero.scroll')} ↓
+  </a>
+
+  <!-- Wave separator (was the negative-margin SVG of the old site) -->
+  <svg
+    class="absolute inset-x-0 bottom-0 h-16 w-full sm:h-24"
+    viewBox="0 0 1440 100"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      fill="#000"
+      d="M0,32L120,42.7C240,53,480,75,720,74.7C960,75,1200,53,1320,42.7L1440,32L1440,100L0,100Z"></path>
+  </svg>
+</header>
