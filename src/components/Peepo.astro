@@ -1,0 +1,302 @@
+---
+/**
+ * Animated Peepo.
+ * - variant "fine": peeks up when scrolled into view (A), RGB glitch on hover +
+ *   squash on click (B), speech bubble + confetti on click (D).
+ * - variant "bye": hops in with a waving "See you!" when reached (E), plus B.
+ * Without JS or with prefers-reduced-motion it renders as a static image.
+ */
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  variant: 'fine' | 'bye';
+  alt: string;
+}
+
+const { variant, alt } = Astro.props;
+const t = useTranslations(Astro.currentLocale);
+const src = variant === 'fine' ? '/img/peepo_fine.webp' : '/img/peepo_bye.webp';
+const byeText = t('peepo.bye');
+---
+
+<div class:list={['peepo-stage', `peepo-${variant}`]} data-peepo={variant} data-lines={t('peepo.lines')}>
+  {variant === 'fine' && <p class="peepo-bubble" aria-live="polite"></p>}
+  {
+    variant === 'bye' && (
+      <p class="peepo-bye-text" aria-hidden="true">
+        {[...byeText].map((c, i) => (
+          <span style={`--i:${i}`}>{c === ' ' ? ' ' : c}</span>
+        ))}
+      </p>
+    )
+  }
+  <button type="button" class="peepo-btn" aria-label={variant === 'fine' ? `${alt}. ${t('peepo.clickHint')}` : alt}>
+    <img src={src} alt="" width="150" height="150" loading="lazy" decoding="async" class="peepo-img" draggable="false" />
+  </button>
+  {variant === 'fine' && <span class="peepo-ground" aria-hidden="true"></span>}
+</div>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const EMOJIS = ['⭐', '💜', '✨', '🎉', '💻'];
+
+  function restart(el: Element, cls: string) {
+    el.classList.remove(cls);
+    void (el as HTMLElement).offsetWidth;
+    el.classList.add(cls);
+  }
+
+  function onceVisible(el: Element, threshold: number, cb: () => void) {
+    const io = new IntersectionObserver(
+      ([entry], obs) => {
+        if (entry?.isIntersecting) {
+          obs.disconnect();
+          cb();
+        }
+      },
+      { threshold },
+    );
+    io.observe(el);
+  }
+
+  function confetti(stage: HTMLElement) {
+    for (let i = 0; i < 14; i++) {
+      const p = document.createElement('span');
+      p.className = 'peepo-particle';
+      p.textContent = EMOJIS[i % EMOJIS.length] ?? '✨';
+      const a = Math.random() * Math.PI * 2;
+      const d = 70 + Math.random() * 60;
+      p.style.setProperty('--dx', `${Math.cos(a) * d}px`);
+      p.style.setProperty('--dy', `${Math.sin(a) * d}px`);
+      p.style.setProperty('--r', `${Math.random() * 360}deg`);
+      p.addEventListener('animationend', () => p.remove());
+      stage.appendChild(p);
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-peepo]').forEach((stage) => {
+    const variant = stage.dataset.peepo;
+    const btn = stage.querySelector<HTMLButtonElement>('.peepo-btn');
+    const img = stage.querySelector<HTMLImageElement>('.peepo-img');
+    if (!btn || !img) return;
+
+    // B: squash on click (both variants)
+    img.addEventListener('animationend', (e) => {
+      if (e.animationName === 'peepo-squash') img.classList.remove('squash');
+    });
+
+    if (variant === 'fine') {
+      const bubble = stage.querySelector<HTMLElement>('.peepo-bubble');
+      const lines = (stage.dataset.lines ?? '').split('|');
+      let n = 0;
+      let hide: number | undefined;
+
+      btn.addEventListener('click', () => {
+        if (!reduce) restart(img, 'squash');
+        if (bubble) {
+          bubble.textContent = lines[n++ % lines.length] ?? '';
+          restart(bubble, 'show');
+          clearTimeout(hide);
+          hide = window.setTimeout(() => bubble.classList.remove('show'), 1800);
+        }
+        if (!reduce) confetti(stage);
+      });
+
+      // A: peek up when scrolled into view
+      if (!reduce) {
+        stage.classList.add('peek-ready');
+        onceVisible(stage, 0.5, () => stage.classList.add('in'));
+      }
+    } else {
+      btn.addEventListener('click', () => {
+        if (!reduce) restart(img, 'squash');
+      });
+
+      // E: hop in with "See you!" when reached
+      if (!reduce) {
+        stage.classList.add('bye-ready');
+        onceVisible(stage, 0.6, () => stage.classList.add('go'));
+      }
+    }
+  });
+</script>
+
+<style>
+  .peepo-stage {
+    position: relative;
+    display: grid;
+    place-items: end center;
+    width: min(100%, 320px);
+    margin-inline: auto;
+  }
+  .peepo-fine {
+    min-height: clamp(160px, 26vw, 220px);
+    padding-top: 3rem;
+    /* Hide Peepo below the ground line only; bubble and confetti may overflow. */
+    clip-path: inset(-200px -200px 0 -200px);
+  }
+  .peepo-bye {
+    min-height: clamp(150px, 24vw, 200px);
+    padding-top: 2.75rem;
+    overflow-x: clip;
+  }
+
+  .peepo-btn {
+    cursor: pointer;
+    border: 0;
+    background: none;
+    padding: 0;
+    border-radius: 12px;
+  }
+  .peepo-img {
+    display: block;
+    width: clamp(90px, 15vw, 150px);
+    height: auto;
+    user-select: none;
+  }
+
+  /* B: RGB glitch on hover/focus (same palette as the hero title) */
+  .peepo-btn:hover .peepo-img,
+  .peepo-btn:focus-visible .peepo-img {
+    animation:
+      peepo-rgb 180ms steps(2) infinite,
+      peepo-jitter 120ms steps(2) infinite;
+  }
+  .peepo-img.squash {
+    animation: peepo-squash 450ms cubic-bezier(0.3, 1.6, 0.5, 1) !important;
+  }
+  @keyframes peepo-rgb {
+    0% { filter: drop-shadow(4px -3px 0 var(--color-glitch-red)) drop-shadow(-4px 3px 0 var(--color-glitch-cyan)); }
+    50% { filter: drop-shadow(-5px 2px 0 var(--color-glitch-red)) drop-shadow(5px -2px 0 var(--color-glitch-cyan)); }
+    100% { filter: drop-shadow(3px 4px 0 var(--color-glitch-red)) drop-shadow(-3px -4px 0 var(--color-glitch-cyan)); }
+  }
+  @keyframes peepo-jitter {
+    0% { translate: 0 0; }
+    50% { translate: 2px -1px; }
+    100% { translate: -2px 1px; }
+  }
+  @keyframes peepo-squash {
+    0% { transform: scale(1, 1); }
+    30% { transform: scale(1.25, 0.75); }
+    55% { transform: scale(0.85, 1.2); }
+    75% { transform: scale(1.06, 0.95); }
+    100% { transform: scale(1, 1); }
+  }
+
+  /* A: peek up from the "ground" line */
+  .peepo-ground {
+    position: absolute;
+    inset: auto 10% 0;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-brand-1), var(--color-brand-2), var(--color-brand-3), var(--color-brand-4), var(--color-brand-5));
+  }
+  .peek-ready .peepo-btn {
+    transform: translateY(110%);
+  }
+  .peek-ready.in .peepo-btn {
+    animation:
+      peepo-peek 900ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+      peepo-bob 2.4s ease-in-out 900ms infinite;
+  }
+  @keyframes peepo-peek {
+    0% { transform: translateY(110%); }
+    60% { transform: translateY(-6%) scaleY(1.06); }
+    80% { transform: translateY(2%) scaleY(0.96); }
+    100% { transform: translateY(0); }
+  }
+  @keyframes peepo-bob {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -6px; }
+  }
+
+  /* D: speech bubble + confetti */
+  .peepo-bubble {
+    position: absolute;
+    top: 0.25rem;
+    left: 50%;
+    z-index: 1;
+    translate: -50% 0;
+    padding: 0.35rem 0.8rem;
+    border-radius: 14px;
+    background: #fff;
+    color: #000;
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0;
+    scale: 0.6;
+    pointer-events: none;
+    transition:
+      opacity 0.2s,
+      scale 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .peepo-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    translate: -50% 0;
+    border: 6px solid transparent;
+    border-top-color: #fff;
+    border-bottom: 0;
+  }
+  .peepo-bubble.show {
+    opacity: 1;
+    scale: 1;
+  }
+  :global(.peepo-particle) {
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    font-size: 1.1rem;
+    pointer-events: none;
+    animation: peepo-burst 900ms ease-out forwards;
+  }
+  @keyframes peepo-burst {
+    from { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+    to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(var(--r)); opacity: 0; }
+  }
+
+  /* E: goodbye hop + waving letters */
+  .peepo-bye-text {
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    text-align: center;
+    font-size: clamp(1.25rem, 3vw, 1.6rem);
+    font-weight: 800;
+  }
+  .bye-ready .peepo-bye-text {
+    opacity: 0;
+  }
+  .bye-ready .peepo-btn {
+    transform: translateX(-160%);
+  }
+  .bye-ready.go .peepo-btn {
+    animation: peepo-hop 1.6s ease-in-out forwards;
+  }
+  .bye-ready.go .peepo-bye-text {
+    animation: peepo-fade-in 0.6s ease 1s forwards;
+  }
+  .peepo-bye-text span {
+    display: inline-block;
+    animation: peepo-wave-letter 1.2s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 70ms);
+  }
+  @keyframes peepo-hop {
+    0% { transform: translateX(-160%) rotate(-8deg); }
+    35% { transform: translateX(0) rotate(0); }
+    45% { transform: translateY(-22px); }
+    55% { transform: translateY(0) scaleY(0.93); }
+    62% { transform: translateY(-10px); }
+    70%, 100% { transform: none; }
+  }
+  @keyframes peepo-fade-in {
+    to { opacity: 1; }
+  }
+  @keyframes peepo-wave-letter {
+    0%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+  }
+</style>

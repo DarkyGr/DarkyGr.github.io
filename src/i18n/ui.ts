@@ -28,6 +28,9 @@ const ui = {
     'exp.cta': 'View CV',
     'exp.bye': "That's all. Have a great day, and may the Force be with you.",
     'exp.peepoByeAlt': 'Peepo waving goodbye',
+    'peepo.clickHint': 'Click Peepo',
+    'peepo.lines': "It's a joke!|Hire me?|Ctrl+C, Ctrl+V|It compiles!|git push --force?",
+    'peepo.bye': 'See you!',
     'footer.madeWith': 'Made with',
   },
   es: {
@@ -51,6 +54,9 @@ const ui = {
     'exp.cta': 'Ver CV',
     'exp.bye': 'Eso es todo. Que tengas un gran día y que la Fuerza te acompañe.',
     'exp.peepoByeAlt': 'Peepo despidiéndose con la mano',
+    'peepo.clickHint': 'Haz clic en Peepo',
+    'peepo.lines': '¡Es broma!|¿Me contratas?|Ctrl+C, Ctrl+V|¡Compila!|¿git push --force?',
+    'peepo.bye': '¡Nos vemos!',
     'footer.madeWith': 'Hecho con',
   },
 } as const satisfies Record<Lang, Record<string, string>>;

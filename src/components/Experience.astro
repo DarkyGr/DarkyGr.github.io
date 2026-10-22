@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import Peepo from './Peepo.astro';
 import Typewriter from './Typewriter.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { useTranslations } from '../i18n/ui';
@@ -14,15 +15,9 @@ const t = useTranslations(Astro.currentLocale);
 
   <p class="reveal text-2xl font-semibold text-red-500">{t('exp.none')}</p>
 
-  <img
-    src="/img/peepo_fine.webp"
-    alt={t('exp.peepoFineAlt')}
-    width="150"
-    height="150"
-    loading="lazy"
-    decoding="async"
-    class="peepo reveal mx-auto my-16"
-  />
+  <div class="my-10">
+    <Peepo variant="fine" alt={t('exp.peepoFineAlt')} />
+  </div>
 
   <div class="reveal space-y-3">
     <p class="text-3xl font-bold text-amber-400">{t('exp.joke')}</p>
@@ -37,27 +32,8 @@ const t = useTranslations(Astro.currentLocale);
   </div>
 
   <p class="reveal mt-20 text-lg">{t('exp.bye')}</p>
-  <img
-    src="/img/peepo_bye.webp"
-    alt={t('exp.peepoByeAlt')}
-    width="150"
-    height="150"
-    loading="lazy"
-    decoding="async"
-    class="peepo reveal mx-auto mt-6"
-  />
+  <div class="mt-6">
+    <Peepo variant="bye" alt={t('exp.peepoByeAlt')} />
+  </div>
 </section>
 
-<style>
-  .peepo {
-    width: clamp(90px, 15vw, 150px);
-    height: auto;
-    transition:
-      width 1s,
-      transform 1s;
-  }
-  .peepo:hover {
-    width: clamp(150px, 25vw, 250px);
-    transform: rotateY(150deg);
-  }
-</style>
